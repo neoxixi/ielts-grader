@@ -204,9 +204,13 @@ def webui():
         print("❌ 需要安装 gradio: pip install ielts-grader[web]")
         sys.exit(1)
 
-    from .grader import grade_essay
+    from .grader import grade_essay, _has_api_key
     from .core import build_enriched_report
     from .report import render_html
+
+    has_key = _has_api_key()
+    if not has_key:
+        print("⚠️  未检测到 API Key，WebUI 将使用离线评分（精度有限）")
 
     def grade(essay, task_type, use_api):
         if not essay or len(essay.strip()) < 20:
@@ -245,6 +249,8 @@ def webui():
 
     with gr.Blocks(title="IELTS 写作 AI 批改") as demo:
         gr.Markdown("# 📝 IELTS 写作 AI 批改系统")
+        if not has_key:
+            gr.Markdown("> ⚠️ 未检测到 API Key，将使用**离线启发式评分**（精度有限）。\n> 设置方法: `export ANTHROPIC_API_KEY=your_key`")
         gr.Markdown("输入作文 → AI 四维评分 → 分段画像 → 提分建议 → 4周路线图")
 
         with gr.Row():

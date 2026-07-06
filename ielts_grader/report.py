@@ -166,6 +166,9 @@ th {{ background: #f8f9fa; }}
 <div class="card"><h2>⚠️ 主要问题</h2>{weaknesses_html}</div>
 {"" if not roadmap or not roadmap.get("phase_4weeks") else f'<div class="card"><h2>🗺️ 4周提升路线图</h2><p><strong>路线:</strong> {roadmap.get("key", "")} | <strong>预计:</strong> {roadmap.get("duration", "")}</p>{phases_html}</div>'}
 <p style="color:#999;text-align:center;margin-top:30px;">由 IELTS Grader 生成 · {datetime.now().strftime('%Y-%m-%d %H:%M')}</p>
+<p style="color:#bbb;text-align:center;font-size:12px;border-top:1px solid #eee;padding-top:12px;margin-top:20px;">
+© IELTS Grader · AGPL-3.0 · 未经授权禁止商业复制或转售
+</p>
 </body></html>"""
 
     if output_path:

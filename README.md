@@ -2,6 +2,10 @@
 
 > 🎯 输入雅思作文 → 四维 AI 评分 → 分段画像 → 提分建议 → 4周路线图
 
+> **⚠️ 许可证**: 本项目基于 AGPL-3.0 发布。专家知识库（Band画像/路线图）和评分 Prompt 受版权保护。
+> **商业使用**: 如需闭源集成、白标部署或 SaaS 商业授权，请联系我们。
+> **隐私声明**: 你的 API Key 仅在本地使用，代码不会向外发送非评分请求。
+
 ## ✨ 功能
 
 - **四维评分**: TA/CC/LR/GRA 每维度 Band + 评分理由
@@ -104,16 +108,41 @@ python3 -m ielts_grader.cli webui
 
 ## 🔧 配置
 
-评分默认使用 DeepSeek API（OpenAI 兼容模式）。API Key 优先级：
+评分默认使用 DeepSeek API（OpenAI 兼容模式）。需要先设置 API Key。
 
-1. `~/.claude/settings.json` → `env.ANTHROPIC_API_KEY`
-2. 环境变量 `ANTHROPIC_API_KEY` 或 `OPENAI_API_KEY`
+### API Key 设置（二选一）
 
-模型名优先级：
+**方式一：环境变量（推荐开源用户）**
+```bash
+export ANTHROPIC_API_KEY="sk-your-key-here"
+export OPENAI_BASE_URL="https://api.deepseek.com"  # 默认已指向 DeepSeek
+```
 
-1. 环境变量 `LLM_MODEL`
-2. `~/.claude/settings.json` → `model`
-3. 默认 `deepseek-chat`
+**方式二：Claude Code 配置文件（仅供 Claude Code 用户）**
+`~/.claude/settings.json` 中的 `env.ANTHROPIC_API_KEY`
+
+> **安全说明**: API Key 仅在本地使用，代码仅发送评分请求到配置的 API 地址。
+> 你可以通过 `OPENAI_BASE_URL` 切换到任意 OpenAI 兼容服务（如 GPT-4、Claude 等）。
+
+### 模型选择
+
+```bash
+# DeepSeek（默认，性价比最高）
+export LLM_MODEL="deepseek-chat"
+
+# GPT-4（更贵但公认更准）
+export LLM_MODEL="gpt-4o"
+export OPENAI_BASE_URL="https://api.openai.com"
+
+# Claude
+export LLM_MODEL="claude-sonnet-5-20251001"
+export OPENAI_BASE_URL="https://api.anthropic.com"
+```
+
+### 优先级
+
+API Key: 环境变量 > `~/.claude/settings.json`
+模型名: 环境变量 `LLM_MODEL` > `~/.claude/settings.json` > 默认 `deepseek-chat`
 
 ```bash
 # 使用 GPT-4
@@ -136,4 +165,14 @@ LLM_MODEL=claude-sonnet-5-20251001 ANTHROPIC_BASE_URL=https://api.anthropic.com 
 
 ## 📄 License
 
-MIT
+**AGPL-3.0** © 2026 Neoqi (neoxixi)
+
+本项目的专家知识库（包括但不限于 Band 画像、写作策略、4周路线图）和
+评分 Prompt 受版权保护。任何修改后的网络服务版本必须开源其完整源码。
+
+**商业授权**: 如需闭源集成、白标部署或 SaaS 商业使用，请联系我们。
+未经授权的商业复制或转售将追究法律责任。
+
+---
+
+*Built with ❤️ for IELTS learners worldwide*

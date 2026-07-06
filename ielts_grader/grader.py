@@ -1,13 +1,23 @@
 """
 LLM API 调用模块 — DeepSeek / OpenAI / Anthropic 兼容
+
+API Key 加载顺序:
+  1. 环境变量 ANTHROPIC_API_KEY / OPENAI_API_KEY（标准方式，推荐开源用户使用）
+  2. ~/.claude/settings.json（Claude Code 开发者便利）
 """
 
 import json, os, re
 from pathlib import Path
 
 
-def _get_api_key() -> str:
-    """从 Claude Code 配置中读取 API Key"""
+def _has_api_key() -> bool:
+    """检查是否有可用的 API Key（不返回值，只判断存在性）"""
+    return bool(os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("OPENAI_API_KEY")
+                or _get_key_from_settings())
+
+
+def _get_key_from_settings() -> str:
+    """从 Claude Code 配置读取 API Key（开发者便利）"""
     settings_paths = [
         os.path.expanduser("~/.claude/settings.local.json"),
         os.path.expanduser("~/.claude/settings.json"),
@@ -21,11 +31,22 @@ def _get_api_key() -> str:
                 return key
         except (FileNotFoundError, json.JSONDecodeError):
             continue
-    return os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("OPENAI_API_KEY") or ""
+    return ""
+
+
+def _get_api_key() -> str:
+    """
+    获取 API Key。
+    优先级: 环境变量 > Claude Code settings.json
+    """
+    key = os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("OPENAI_API_KEY")
+    if key:
+        return key
+    return _get_key_from_settings()
 
 
 def _get_model() -> str:
-    """从环境变量或 Claude Code 配置读取模型名"""
+    """获取模型名。优先级: LLM_MODEL 环境变量 > settings.json > 默认值"""
     model = os.environ.get("LLM_MODEL", "")
     if model:
         return model
@@ -109,7 +130,7 @@ def grade_essay(essay: str, task_type: str = "T2",
     参数:
         essay: 作文文本
         task_type: T1(图表) / T2(议论文)
-        api_key: API Key (默认从 settings.json 读取)
+        api_key: API Key (默认从环境变量或 settings.json 读取)
         model: 模型名 (默认 deepseek-chat)
         base_url: API 地址 (默认 https://api.deepseek.com)
         prompt_path: v2 prompt yaml 路径
