@@ -15,7 +15,7 @@ from datetime import datetime
 from pathlib import Path
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, HTTPException, Depends, Header
+from fastapi import FastAPI, HTTPException, Depends, Header, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
@@ -184,22 +184,52 @@ def pricing_page():
 
 
 @app.get("/v1/keys/free")
-def create_free_key():
-    """免费试用：创建 3 次额度的 API Key"""
-    new_key = f"ig_{secrets.token_hex(16)}"
+def create_free_key(email: str = Query("", description="邮箱")):
+    """
+    免费试用：每人累计最多 3 次评分（不是每月3次）。
+
+    流程：
+      1. 传入邮箱
+      2. 如果该邮箱已有 API Key → 返回现有 Key
+      3. 如果该邮箱没有 Key → 创建新 Key（3次额度，终身有效）
+    """
+    if not email or "@" not in email:
+        raise HTTPException(400, "请提供有效的邮箱 ?email=xxx@xxx.com")
+
     import sqlite3
     conn = sqlite3.connect(str(_DB_PATH))
+
+    # 查该邮箱是否有 Key
+    existing = conn.execute(
+        "SELECT key, credits_remaining, credits_total FROM api_keys WHERE email = ? ORDER BY rowid DESC LIMIT 1",
+        (email,),
+    ).fetchone()
+
+    if existing:
+        conn.close()
+        return {
+            "api_key": existing[0],
+            "credits_remaining": existing[1],
+            "credits_total": existing[2],
+            "message": f"该邮箱已有 Key，剩余 {existing[1]} 次评分。用完需购买。",
+            "pricing": "/pricing",
+            "new": False,
+        }
+
+    # 新用户 → 创建 3 次额度的免费 Key
+    new_key = f"ig_{secrets.token_hex(16)}"
     conn.execute(
         "INSERT INTO api_keys (key, email, plan, credits_remaining, credits_total) VALUES (?, ?, ?, ?, ?)",
-        (new_key, "free@user", "free", 3, 3),
+        (new_key, email, "free", 3, 3),
     )
     conn.commit()
     conn.close()
     return {
         "api_key": new_key,
         "credits": 3,
-        "message": "Free trial key created. 3 credits remaining.",
+        "message": "✅ 免费试用 Key 已创建（3次评分，终身有效，非每月）。用完可在控制台续费。",
         "pricing": "/pricing",
+        "new": True,
     }
 
 

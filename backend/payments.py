@@ -374,10 +374,15 @@ Object.entries(PLANS).forEach(([key, p]) => {
     <div style="font-size:0.85em;color:#999;margin-bottom:8px;">次评分</div>
     <div class="desc">${p.desc}</div>
     ${p.price === "免费"
-      ? '<a class="btn green" href="/v1/keys/free">免费领取</a>'
+      ? '<a class="btn green" href="javascript:void(0)" onclick="getFreeTrial()">免费领取</a>'
       : '<a class="btn" href="/v1/payments/checkout-redirect/' + key + '">立即购买</a>'}
   `;
   container.appendChild(div);
+function getFreeTrial() {
+  const email = prompt('请输入邮箱，领取 3 次免费评分（每人终身累计3次，非每月）：');
+  if (!email || !email.includes('@')) { alert('请输入有效邮箱'); return; }
+  window.location.href = '/v1/keys/free?email=' + encodeURIComponent(email);
+}
 });
 </script>
 <p style="text-align:center;margin-top:8px;font-size:0.9em;">🏪 也支持 <a href="/claim" style="color:#667eea;">闲鱼/淘宝购买激活码</a>，购买后在此输入激活码领取</p>
