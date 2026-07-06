@@ -186,10 +186,12 @@ async function submitPay() {{
       body: JSON.stringify({{ plan: '{plan}', email }}),
     }});
     const data = await resp.json();
-    document.getElementById('result').innerHTML =
-      data.api_key
-        ? '✅ Key 已生成！跳转控制台...' + '<script>setTimeout(() => window.location.href="/dashboard?key=' + data.api_key + '", 1500)<\/script>'
-        : '❌ ' + (data.error || '处理失败');
+    if (data.api_key) {{
+      document.getElementById('result').innerHTML = '✅ Key 已生成！跳转控制台...';
+      setTimeout(() => window.location.href = '/dashboard?key=' + data.api_key, 1500);
+    }} else {{
+      document.getElementById('result').innerHTML = '❌ ' + (data.error || '处理失败');
+    }}
   }} catch(e) {{
     document.getElementById('result').innerHTML = '❌ 网络错误';
   }}
