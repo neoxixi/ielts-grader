@@ -19,6 +19,10 @@ RUN pip install --no-cache-dir -e /app
 
 ENV PORT=8000
 ENV ADMIN_API_KEY="change-me-in-production"
+ENV PAYMENT_PROVIDER=manual
+
+# 收款码图片（放在 backend/static/ 下，构建时或挂载卷传入）
+# COPY backend/static/ /app/backend/static/
 
 EXPOSE 8000
 CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000"]

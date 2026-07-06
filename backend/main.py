@@ -136,6 +136,13 @@ app = FastAPI(
 )
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
+# 静态文件（收款码图片等）
+from fastapi.staticfiles import StaticFiles
+import os
+_static_dir = Path(__file__).parent / "static"
+_static_dir.mkdir(exist_ok=True)
+app.mount("/static", StaticFiles(directory=str(_static_dir)), name="static")
+
 # 注册支付路由
 from .payments import router as payments_router, PRICING_PAGE_HTML, PRICING
 app.include_router(payments_router)

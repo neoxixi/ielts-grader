@@ -194,9 +194,11 @@ uvicorn backend.main:app --host 0.0.0.0 --port 8000
 | GET | `/v1/me` | 查看剩余额度 |
 | POST | `/v1/grade` | 作文评分 |
 | POST | `/v1/keys` | (管理员) 创建 API Key |
-| POST | `/v1/payments/checkout` | 创建购买链接 |
-| GET | `/v1/payments/checkout-redirect/{plan}` | 定价页购买跳转 |
-| POST | `/v1/payments/webhook` | Lemon Squeezy 支付回调 |
+| POST | `/v1/payments/checkout` | 创建支付订单 |
+| GET | `/v1/payments/checkout-redirect/{plan}` | 定价页 -> 支付页 |
+| POST | `/v1/payments/manual-confirm` | 收款码付款确认 |
+| GET | `/v1/payments/manual-qr?plan=pro` | 收款码支付页面 |
+| POST | `/v1/payments/hupijiao-webhook` | 虎皮椒支付回调 |
 
 ### API 使用示例
 
@@ -232,7 +234,7 @@ docker run -p 8000:8000 \
 - [x] 四维评分 + 分段画像 + 4周路线图
 - [x] 交叉验证防误评
 - [x] SaaS API 后端（FastAPI + 认证 + 额度管理）
-- [x] Lemon Squeezy 支付集成
+- [x] 微信/支付宝支付（收款码模式 + 虎皮椒聚合支付）
 - [x] Docker 部署
 - [ ] WeasyPrint PDF 导出
 - [ ] 多作文历史追踪
