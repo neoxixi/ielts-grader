@@ -157,15 +157,10 @@ def main():
 
     prompt_path = args.prompt
     if not prompt_path:
-        # 自动查找 v2 prompt
-        candidates = [
-            Path(__file__).resolve().parent / "prompts" / "ielts_writing_v2.yaml",
-            Path("/home/neoqi/yangneng/evaluation/prompts/ielts_writing_v2.yaml"),
-        ]
-        for p in candidates:
-            if p.exists():
-                prompt_path = str(p)
-                break
+        # 自动查找 v2 prompt（仅在私有知识库目录中）
+        priv_prompt = Path.home() / ".ielts-grader-private" / "ielts_writing_v2.yaml"
+        if priv_prompt.exists():
+            prompt_path = str(priv_prompt)
 
     llm_result = grade_essay(essay, args.task, prompt_path=prompt_path, verbose=args.verbose)
     enriched = build_enriched_report(llm_result, essay, args.task)

@@ -21,7 +21,10 @@ Thumbs.db
 .env.local
 *.local.json
 
-# API Keys / Credentials（防止 settings.json 被误复制到项目目录）
+# Private knowledge base
+.ielts-grader-private/
+
+# API Keys / Credentials
 settings.json
 settings.local.json
 credentials*
