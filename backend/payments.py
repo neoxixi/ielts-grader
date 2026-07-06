@@ -354,6 +354,7 @@ body { font-family: -apple-system, 'PingFang SC', sans-serif; background: #f0f2f
 </ul>
 <div class="footer">
   <p>有问题？联系作者 · 付款后自动发放 API Key</p>
+  <p style="margin-top:8px;">🏪 也支持 <a href="/claim" style="color:#667eea;">闲鱼/淘宝购买激活码</a>（搜索 "IELTS Grader"）</p>
 </div>
 <script>
 const PLANS = {
@@ -379,4 +380,5 @@ Object.entries(PLANS).forEach(([key, p]) => {
   container.appendChild(div);
 });
 </script>
+<p style="text-align:center;margin-top:8px;font-size:0.9em;">🏪 也支持 <a href="/claim" style="color:#667eea;">闲鱼/淘宝购买激活码</a>，购买后在此输入激活码领取</p>
 </body></html>"""
