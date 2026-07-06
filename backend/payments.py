@@ -188,7 +188,7 @@ async function submitPay() {{
     const data = await resp.json();
     document.getElementById('result').innerHTML =
       data.api_key
-        ? '✅ Key 已生成：<code style="background:#eef;padding:4px 8px;border-radius:4px;">' + data.api_key + '</code>'
+        ? '✅ Key 已生成！跳转控制台...' + '<script>setTimeout(() => window.location.href="/dashboard?key=' + data.api_key + '", 1500)<\/script>'
         : '❌ ' + (data.error || '处理失败');
   }} catch(e) {{
     document.getElementById('result').innerHTML = '❌ 网络错误';

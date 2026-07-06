@@ -147,6 +147,10 @@ app.mount("/static", StaticFiles(directory=str(_static_dir)), name="static")
 from .payments import router as payments_router, PRICING_PAGE_HTML, PRICING
 app.include_router(payments_router)
 
+# 注册前端页面路由
+from .pages import router as pages_router
+app.include_router(pages_router)
+
 
 # ═══════════════════════════════════════════════
 # 认证
