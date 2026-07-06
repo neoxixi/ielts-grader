@@ -8,6 +8,9 @@ build/
 # Output
 output/
 
+# Backend runtime data
+backend/data/
+
 # IDE
 .vscode/
 .idea/

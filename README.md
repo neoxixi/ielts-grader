@@ -169,16 +169,74 @@ LLM_MODEL=gpt-4 OPENAI_BASE_URL=https://api.openai.com ielts-grader --text "..."
 LLM_MODEL=claude-sonnet-5-20251001 ANTHROPIC_BASE_URL=https://api.anthropic.com ielts-grader --text "..."
 ```
 
+## 🌐 SaaS API (Backend)
+
+本项目包含完整的 SaaS 后端，支持 API Key 认证 + 额度管理 + 支付集成。
+
+### 快速启动后端
+
+```bash
+cd ielts-grader
+
+# 设置管理员 Key
+export ADMIN_API_KEY="your-admin-key"
+
+# 启动服务
+uvicorn backend.main:app --host 0.0.0.0 --port 8000
+```
+
+### API 端点
+
+| 方法 | 路径 | 说明 |
+|------|------|------|
+| GET | `/pricing` | 定价页面 |
+| GET | `/v1/keys/free` | 免费领取 3 次试用 |
+| GET | `/v1/me` | 查看剩余额度 |
+| POST | `/v1/grade` | 作文评分 |
+| POST | `/v1/keys` | (管理员) 创建 API Key |
+| POST | `/v1/payments/checkout` | 创建购买链接 |
+| GET | `/v1/payments/checkout-redirect/{plan}` | 定价页购买跳转 |
+| POST | `/v1/payments/webhook` | Lemon Squeezy 支付回调 |
+
+### API 使用示例
+
+```bash
+# 1. 获取免费 Key
+KEY=$(curl -s http://localhost:8000/v1/keys/free | python3 -c "import sys,json;print(json.load(sys.stdin)['api_key'])")
+
+# 2. 评分
+curl -X POST http://localhost:8000/v1/grade \
+  -H "Authorization: Bearer $KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"essay":"Your essay...","task_type":"T2","format":"json"}'
+```
+
+### 部署
+
+```bash
+# Docker
+docker build -t ielts-grader -f backend/Dockerfile .
+docker run -p 8000:8000 \
+  -e ANTHROPIC_API_KEY=your-key \
+  -e ADMIN_API_KEY=your-admin-key \
+  -v ~/.ielts-grader-private:/root/.ielts-grader-private \
+  ielts-grader
+```
+
+> **注意**: 生产部署需挂载 `~/.ielts-grader-private/` 以使用完整知识库
+
 ## 🗺️ 路线规划
 
 - [x] CLI 工具（`ielts-grader`）
 - [x] Gradio Web UI（`ielts-grader-webui`）
 - [x] 四维评分 + 分段画像 + 4周路线图
 - [x] 交叉验证防误评
+- [x] SaaS API 后端（FastAPI + 认证 + 额度管理）
+- [x] Lemon Squeezy 支付集成
+- [x] Docker 部署
 - [ ] WeasyPrint PDF 导出
 - [ ] 多作文历史追踪
 - [ ] 学生画像（长期弱项分析）
-- [ ] SaaS API 模式
 
 ## 📄 License
 
