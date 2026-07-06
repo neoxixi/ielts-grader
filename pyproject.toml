@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["ielts_grader*"]
+
+[project]
+name = "ielts-grader"
+version = "1.0.0"
+description = "IELTS Writing AI Grader — 雅思写作AI批改评分系统"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [{name = "Neoqi"}]
+keywords = ["ielts", "writing", "ai", "grading", "education"]
+
+dependencies = [
+    "openai>=1.0",
+]
+
+[project.optional-dependencies]
+web = ["gradio>=4.0"]
+anthropic = ["anthropic>=0.30"]
+all = ["gradio>=4.0", "anthropic>=0.30", "weasyprint>=60"]
+
+[project.scripts]
+ielts-grader = "ielts_grader.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/neoqi/ielts-grader"
+Source = "https://github.com/neoqi/ielts-grader"
